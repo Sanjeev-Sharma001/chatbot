@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excel Query Web App</title>
+</head>
+<body>
+    <h1>Upload an Excel File</h1>
+    <form method="POST" action="/uploadfile" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+    </form>
+
+    <h1>Ask a Question</h1>
+    <form method="POST" action="/query">
+        <input type="text" name="question" placeholder="Enter your question">
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="result">
+        <h2>Query Result:</h2>
+        <pre id="result-text"></pre>
+    </div>
+
+    <script>
+        document.querySelector('form[action="/query"]').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/query', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('result-text').innerText = `Error: ${data.error}`;
+                } else {
+                    document.getElementById('result-text').innerText = JSON.stringify(data, null, 2);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
